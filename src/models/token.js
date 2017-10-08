@@ -7,4 +7,4 @@ const tokenSchema = new mongoose.Schema({
 
 const Token = mongoose.model('Token', tokenSchema);
 
-exports.Token = Token;
+module.exports = Token;
