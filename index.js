@@ -5,6 +5,6 @@ app.get('/', function (req, res) {
   res.sendStatus(200);
 });
 
-app.listen(80, function () {
+app.listen(443, function () {
   console.log('Started. ')
 });
