@@ -17,6 +17,9 @@
     "url": "https://github.com/asymptote-inc/jury-server/issues"
   },
   "homepage": "https://github.com/asymptote-inc/jury-server#readme",
+  "engines": {
+    "node": "8.x.x"
+  },
   "dependencies": {
     "express": "^4.16.1"
   }
