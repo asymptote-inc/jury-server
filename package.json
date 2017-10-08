@@ -21,6 +21,8 @@
     "node": "8.x.x"
   },
   "dependencies": {
-    "express": "^4.16.1"
+    "bluebird": "^3.5.1",
+    "express": "^4.16.1",
+    "mongoose": "^4.12.0"
   }
 }
