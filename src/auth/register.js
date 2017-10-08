@@ -21,7 +21,7 @@ const register = ({ username, email, password }, callback) => {
         const salt = crypto.randomBytes(256);
         const key = crypto.pbkdf2Sync(password, salt, 100000, 512, 'sha512').toString('base64');
 
-        const user = new User({ userId, name: username, email, key, salt, coins: 0 });
+        const user = new User({ userId, name: username, email, key, salt: salt.toString('base64'), coins: 0 });
 
         user.save(callback);
       }
