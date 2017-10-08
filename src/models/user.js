@@ -4,10 +4,11 @@ const userSchema = new mongoose.Schema({
   userId: String,
   name: String,
   email: String,
-  password: String,
+  key: String,
+  salt: String,
   coins: Number
 });
 
 const User = mongoose.model('User', userSchema);
 
-exports.User = User;
+module.exports = User;
