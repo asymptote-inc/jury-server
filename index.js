@@ -6,7 +6,7 @@ const config = require('./config');
 
 const app = express();
 const port = process.env.PORT || 80;
-const environment = process.env.NODE_ENV || 'DEV';
+const environment = process.env.NODE_ENV || 'development';
 
 mongoose.Promise = Bluebird;
 mongoose.connect(config.mongoDbConnectionString, { useMongoClient: true, promiseLibrary: Bluebird });
