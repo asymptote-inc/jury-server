@@ -1,0 +1,24 @@
+{
+  "name": "jury-server",
+  "description": "",
+  "scripts": {
+  },
+  "env": {
+    "mongodb_password": {
+      "required": true
+    },
+    "mongodb_username": {
+      "required": true
+    }
+  },
+  "formation": {
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
