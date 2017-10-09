@@ -8,6 +8,8 @@ const config = require('./config');
 const register = require('./src/auth/register');
 const testAccess = require('./src/auth/testAccess');
 const login = require('./src/auth/login');
+const api = require('./src/api/crowd9Api');
+const jsonApiCall = require('./src/util/jsonApiForward');
 
 const app = express();
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -20,14 +22,8 @@ mongoose.connect(config.mongoDbConnectionString, { useMongoClient: true, promise
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.sendStatus(200); // Ok
-});
-
-app.get('/env', function (req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('X-Temp', "" + config.mongoDbConnectionString);
-  res.send(process.env); 
 });
 
 app.post('/register', (req, res) => {
@@ -75,6 +71,48 @@ app.get('/touch', (req, res) => {
   }
 });
 
-app.listen(port, function () {
+app.get('/api', jsonApiCall(api.getClientJob));
+
+app.get('/api/training_questions', jsonApiCall(api.getAllTrainingQuestions));
+
+app.get('/api/to_answer_questions', jsonApiCall(api.getAllToAnswerQuestions));
+
+app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQuestions));
+
+app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
+
+app.post('/api/questions/:question_id/answers/:worker_nonce', (req, res) => { }); // TODO derive nonce by auth
+
+app.get('/api/workers/:worker_nonce', (req, res) => { }); // TODO derive nonce by auth
+
+app.get('/api/workers/:worker_nonce/quality_summary', (req, res) => { }); // TODO derive nonce by auth
+
+app.get('/api/answers', jsonApiCall(api.getAllAnswers));
+
+app.get('/api/questions/:question_id/answers', (req, res) => { }); // TODO
+
+app.get('/api/quality_summary', jsonApiCall(api.getQuality));
+
+// app.get('/active_jobs', (req, res) => { });
+
+// app.post('/active_jobs/:client_job_key', (req, res) => { });
+
+// app.post('/questions', (req, res) => { });
+
+// app.patch('/questions', (req, res) => { });
+
+// app.delete('/active_jobs/:client_job_key', (req, res) => { });
+
+// app.get('/question_groups', (req, res) => { });
+
+// app.get('/scored_answers', (req, res) => { });
+
+// app.get('/question_groups/:question_group_id', (req, res) => { });
+
+// app.delete('/questions/:question_group_id/:question_id', (req, res) => { });
+
+// app.patch('/questions/:question_group_id/:question_id', (req, res) => { });
+
+app.listen(port, () => {
   console.log(`${environment} server listening on port ${port}.`)
 });
