@@ -24,6 +24,11 @@ app.get('/', function (req, res) {
   res.sendStatus(200); // Ok
 });
 
+app.get('/env', function (req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(process.env); 
+});
+
 app.post('/register', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
