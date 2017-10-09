@@ -6,4 +6,4 @@ if (process.env.NODE_ENV === 'production') {
     mongoDbConnectionString = `mongodb://localhost:27017/jury`;
 }
 
-module.exports = mongoDbConnectionString;
+module.exports.mongoDbConnectionString = mongoDbConnectionString;

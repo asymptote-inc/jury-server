@@ -26,6 +26,7 @@ app.get('/', function (req, res) {
 
 app.get('/env', function (req, res) {
   res.setHeader('Content-Type', 'application/json');
+  res.setHeader('X-Temp', "" + config.mongoDbConnectionString);
   res.send(process.env); 
 });
 
