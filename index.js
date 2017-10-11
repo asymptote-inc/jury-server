@@ -6,14 +6,19 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 
 const register = require('./src/auth/register');
-const testAccess = require('./src/auth/testAccess');
 const login = require('./src/auth/login');
+const testAccess = require('./src/auth/testAccess');
+const auth = require('./src/auth/authMiddleware');
 const logout = require('./src/auth/logout');
 const api = require('./src/api/crowd9Api');
 const jsonApiCall = require('./src/api/jsonApiForward');
 
 const app = express();
+const router = express.Router();
+router.use('/api', auth);
+router.use('/xapi', auth);
 app.use(bodyParser.json({ type: 'application/json' }));
+app.use('/', router);
 
 const port = process.env.PORT || 80;
 const environment = process.env.NODE_ENV || 'development';
