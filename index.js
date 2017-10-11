@@ -8,6 +8,7 @@ const config = require('./config');
 const register = require('./src/auth/register');
 const testAccess = require('./src/auth/testAccess');
 const login = require('./src/auth/login');
+const logout = require('./src/auth/logout');
 const api = require('./src/api/crowd9Api');
 const jsonApiCall = require('./src/api/jsonApiForward');
 
@@ -52,6 +53,29 @@ app.post('/login', (req, res) => {
       res.send({ code: result.code });
     }
   });
+});
+
+app.post('/logout', (req, res) => {
+  const auth = req.headers['Authorization'] || req.headers['authorization'];
+
+  if (auth) {
+    let bearerAndCode = auth.split(/\s+/);
+
+    if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
+      res.sendStatus(400); // Bad request      
+    } else {
+      logout({ code: bearerAndCode[1] }, (err, userId) => {
+        if (err) {
+          res.setHeader('WWW-Authenticate', 'Bearer');
+          res.sendStatus(401); // Unauthorized
+        } else {
+          res.sendStatus(200); // OK
+        }
+      });
+    }
+  } else {
+    res.sendStatus(403); // Forbidden
+  }
 });
 
 app.get('/touch', (req, res) => {
