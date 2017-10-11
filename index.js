@@ -8,6 +8,8 @@ const config = require('./config');
 const register = require('./src/auth/register');
 const testAccess = require('./src/auth/testAccess');
 const login = require('./src/auth/login');
+const api = require('./src/api/crowd9Api');
+const jsonApiCall = require('./src/api/jsonApiForward');
 
 const app = express();
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -20,14 +22,8 @@ mongoose.connect(config.mongoDbConnectionString, { useMongoClient: true, promise
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.sendStatus(200); // Ok
-});
-
-app.get('/env', function (req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('X-Temp', "" + config.mongoDbConnectionString);
-  res.send(process.env); 
 });
 
 app.post('/register', (req, res) => {
@@ -62,19 +58,47 @@ app.get('/touch', (req, res) => {
   const auth = req.headers['Authorization'] || req.headers['authorization'];
 
   if (auth) {
-    testAccess(auth.split(/\s+/)[1], err => {
-      if (err) {
-        res.setHeader('WWW-Authenticate', 'Bearer');
-        res.sendStatus(401); // Unauthorized
-      } else {
-        res.sendStatus(200); // OK
-      }
-    });
+    let bearerAndCode = auth.split(/\s+/);
+
+    if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
+      res.sendStatus(400); // Bad request      
+    } else {
+      testAccess({ code: bearerAndCode[1] }, (err, userId) => {
+        if (err) {
+          res.setHeader('WWW-Authenticate', 'Bearer');
+          res.sendStatus(401); // Unauthorized
+        } else {
+          res.sendStatus(200); // OK
+        }
+      });
+    }
   } else {
     res.sendStatus(403); // Forbidden
   }
 });
 
-app.listen(port, function () {
-  console.log(`${environment} server listening on port ${port}.`)
+app.get('/api', jsonApiCall(api.getClientJob));
+
+app.get('/api/training_questions', jsonApiCall(api.getAllTrainingQuestions));
+
+app.get('/api/to_answer_questions', jsonApiCall(api.getAllToAnswerQuestions));
+
+app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQuestions));
+
+app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
+
+app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }, ['userId'])); // TODO derive nonce by auth
+
+app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId'])); // TODO derive nonce by auth
+
+app.get('/api/workers/user/quality_summary', jsonApiCall(api.getUserQuality, {}, ['userId'])); // TODO derive nonce by auth
+
+app.get('/api/answers', jsonApiCall(api.getAllAnswers));
+
+app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" })); // TODO
+
+app.get('/api/quality_summary', jsonApiCall(api.getQuality));
+
+app.listen(port, () => {
+  console.info(`${environment} server listening on port ${port}.`)
 });
