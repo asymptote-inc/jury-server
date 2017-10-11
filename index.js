@@ -89,9 +89,9 @@ app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
 
 app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }, ['userId'])); // TODO derive nonce by auth
 
-app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, ['userId'])); // TODO derive nonce by auth
+app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId'])); // TODO derive nonce by auth
 
-app.get('/api/workers/user/quality_summary', jsonApiCall(api.getQuality, ['userId'])); // TODO derive nonce by auth
+app.get('/api/workers/user/quality_summary', jsonApiCall(api.getUserQuality, {}, ['userId'])); // TODO derive nonce by auth
 
 app.get('/api/answers', jsonApiCall(api.getAllAnswers));
 
@@ -100,5 +100,5 @@ app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQu
 app.get('/api/quality_summary', jsonApiCall(api.getQuality));
 
 app.listen(port, () => {
-  console.log(`${environment} server listening on port ${port}.`)
+  console.info(`${environment} server listening on port ${port}.`)
 });
