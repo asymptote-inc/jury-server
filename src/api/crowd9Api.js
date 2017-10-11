@@ -52,3 +52,14 @@ module.exports = {
     request.get(`${url}/client_jobs/${cjk}/quality_summary`, clean(callback));
   }
 };
+
+// .get('/active_jobs', (err, res) => { });
+// .post('/active_jobs/:client_job_key', (err, res) => { });
+// .post('/questions', (err, res) => { });
+// .patch('/questions', (err, res) => { });
+// .delete('/active_jobs/:client_job_key', (err, res) => { });
+// .get('/question_groups', (err, res) => { });
+// .get('/scored_answers', (err, res) => { });
+// .get('/question_groups/:question_group_id', (err, res) => { });
+// .delete('/questions/:question_group_id/:question_id', (err, res) => { });
+// .patch('/questions/:question_group_id/:question_id', (err, res) => { });

@@ -9,7 +9,7 @@ const register = require('./src/auth/register');
 const testAccess = require('./src/auth/testAccess');
 const login = require('./src/auth/login');
 const api = require('./src/api/crowd9Api');
-const jsonApiCall = require('./src/util/jsonApiForward');
+const jsonApiCall = require('./src/api/jsonApiForward');
 
 const app = express();
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -58,14 +58,20 @@ app.get('/touch', (req, res) => {
   const auth = req.headers['Authorization'] || req.headers['authorization'];
 
   if (auth) {
-    testAccess(auth.split(/\s+/)[1], err => {
-      if (err) {
-        res.setHeader('WWW-Authenticate', 'Bearer');
-        res.sendStatus(401); // Unauthorized
-      } else {
-        res.sendStatus(200); // OK
-      }
-    });
+    let bearerAndCode = auth.split(/\s+/);
+
+    if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
+      res.sendStatus(400); // Bad request      
+    } else {
+      testAccess({ code: bearerAndCode[1] }, (err, userId) => {
+        if (err) {
+          res.setHeader('WWW-Authenticate', 'Bearer');
+          res.sendStatus(401); // Unauthorized
+        } else {
+          res.sendStatus(200); // OK
+        }
+      });
+    }
   } else {
     res.sendStatus(403); // Forbidden
   }
@@ -81,37 +87,17 @@ app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQ
 
 app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
 
-app.post('/api/questions/:question_id/answers/:worker_nonce', (req, res) => { }); // TODO derive nonce by auth
+app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }, ['userId'])); // TODO derive nonce by auth
 
-app.get('/api/workers/:worker_nonce', (req, res) => { }); // TODO derive nonce by auth
+app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, ['userId'])); // TODO derive nonce by auth
 
-app.get('/api/workers/:worker_nonce/quality_summary', (req, res) => { }); // TODO derive nonce by auth
+app.get('/api/workers/user/quality_summary', jsonApiCall(api.getQuality, ['userId'])); // TODO derive nonce by auth
 
 app.get('/api/answers', jsonApiCall(api.getAllAnswers));
 
-app.get('/api/questions/:question_id/answers', (req, res) => { }); // TODO
+app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" })); // TODO
 
 app.get('/api/quality_summary', jsonApiCall(api.getQuality));
-
-// app.get('/active_jobs', (req, res) => { });
-
-// app.post('/active_jobs/:client_job_key', (req, res) => { });
-
-// app.post('/questions', (req, res) => { });
-
-// app.patch('/questions', (req, res) => { });
-
-// app.delete('/active_jobs/:client_job_key', (req, res) => { });
-
-// app.get('/question_groups', (req, res) => { });
-
-// app.get('/scored_answers', (req, res) => { });
-
-// app.get('/question_groups/:question_group_id', (req, res) => { });
-
-// app.delete('/questions/:question_group_id/:question_id', (req, res) => { });
-
-// app.patch('/questions/:question_group_id/:question_id', (req, res) => { });
 
 app.listen(port, () => {
   console.log(`${environment} server listening on port ${port}.`)

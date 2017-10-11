@@ -10,7 +10,7 @@ const testAccess = ({ code }, callback) => {
       } else if (!result) {
         callback(new Error('Access denied. '));
       } else {
-        callback();
+        callback(undefined, result.userId);
       }
     });
   }
