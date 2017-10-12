@@ -16,7 +16,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
     let paramsS = params || {};
     let injectS = inject || [];
 
-    if ('userId' in injectS) {
+    if (injectS.indexOf('userId') !== -1) {
       // inject { nameWeUse: value }
       const auth = req.headers['Authorization'] || req.headers['authorization'];
 
@@ -31,7 +31,11 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
               res.setHeader('WWW-Authenticate', 'Bearer');
               res.sendStatus(401); // Unauthorized
             } else {
-              func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId }, handleResult);
+              if (injectS.indexOf('body') !== -1) {
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId, body: req.body }, handleResult);
+              } else {
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId }, handleResult);
+              }
             }
           });
         }

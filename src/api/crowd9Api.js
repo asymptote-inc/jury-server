@@ -28,8 +28,12 @@ module.exports = {
     request.get(`${url}/client_jobs/${cjk}/answered_questions`, clean(callback));
   },
 
-  postUserAnswerToQuestion: ({ questionId, userId }, callback) => {
-    request.post(`${url}/client_jobs/${cjk}/questions/${questionId}/answers/${userId}`, clean(callback));
+  postUserAnswerToQuestion: ({ questionId, userId, body }, callback) => {
+    request
+      .post(`${url}/client_jobs/${cjk}/questions/${questionId}/answers/${userId}`)
+      .set('Content-Type', 'application/json')
+      .send(body)
+      .end(clean(callback));
   },
 
   getUserSubmittedAnswers: ({ userId }, callback) => {

@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Bluebird = require('bluebird');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 
 const config = require('./config');
 
@@ -17,6 +18,7 @@ const app = express();
 const router = express.Router();
 router.use('/api', auth);
 router.use('/xapi', auth);
+app.use(morgan('dev'));
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use('/', router);
 
@@ -116,15 +118,15 @@ app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQ
 
 app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
 
-app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.postUserAnswerToQuestion, { "questionId": "question_id" }, ['userId'])); // TODO derive nonce by auth
+app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.postUserAnswerToQuestion, { "questionId": "question_id" }, ['userId', 'body']));
 
-app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId'])); // TODO derive nonce by auth
+app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId']));
 
-app.get('/api/workers/user/quality_summary', jsonApiCall(api.getUserQuality, {}, ['userId'])); // TODO derive nonce by auth
+app.get('/api/workers/user/quality_summary', jsonApiCall(api.getUserQuality, {}, ['userId']));
 
 app.get('/api/answers', jsonApiCall(api.getAllAnswers));
 
-app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" })); // TODO
+app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }));
 
 app.get('/api/quality_summary', jsonApiCall(api.getQuality));
 
