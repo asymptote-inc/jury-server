@@ -13,6 +13,7 @@ const auth = require('./src/auth/authMiddleware');
 const logout = require('./src/auth/logout');
 const api = require('./src/api/crowd9Api');
 const jsonApiCall = require('./src/api/jsonApiForward');
+const getUserUnansweredQuestions = require('./src/xapi/getUserUnansweredQuestions');
 
 const app = express();
 const router = express.Router();
@@ -129,6 +130,36 @@ app.get('/api/answers', jsonApiCall(api.getAllAnswers));
 app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }));
 
 app.get('/api/quality_summary', jsonApiCall(api.getQuality));
+
+app.get('/xapi/get_user_unanswered_questions', (req, res) => {
+  const auth = req.headers['Authorization'] || req.headers['authorization'];
+
+  if (auth) {
+    let bearerAndCode = auth.split(/\s+/);
+
+    if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
+      res.sendStatus(400); // Bad request      
+    } else {
+      testAccess({ code: bearerAndCode[1] }, (err, userId) => {
+        if (err) {
+          res.setHeader('WWW-Authenticate', 'Bearer');
+          res.sendStatus(401); // Unauthorized
+        } else {
+          getUserUnansweredQuestions(userId, (errx, resx) => {
+            if (errx) {
+              res.sendStatus(500); // Internal Server Errort    
+            } else {
+              res.setHeader('Content-Type', 'application/json');
+              res.send(resx);
+            }
+          });
+        }
+      });
+    }
+  } else {
+    res.sendStatus(403); // Forbidden
+  }
+});
 
 app.listen(port, () => {
   console.info(`${environment} server listening on port ${port}.`)
