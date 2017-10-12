@@ -116,7 +116,7 @@ app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQ
 
 app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
 
-app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }, ['userId'])); // TODO derive nonce by auth
+app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.postUserAnswerToQuestion, { "questionId": "question_id" }, ['userId'])); // TODO derive nonce by auth
 
 app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId'])); // TODO derive nonce by auth
 
