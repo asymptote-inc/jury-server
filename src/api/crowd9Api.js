@@ -29,6 +29,7 @@ module.exports = {
   },
 
   postUserAnswerToQuestion: ({ questionId, userId, body }, callback) => {
+    console.log({ questionId, userId, body });
     request
       .post(`${url}/client_jobs/${cjk}/questions/${questionId}/answers/${userId}`)
       .set('Content-Type', 'application/json')
