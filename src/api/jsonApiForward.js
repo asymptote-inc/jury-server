@@ -34,6 +34,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
               if (injectS.indexOf('body') !== -1) {
                 console.log(paramsS);
                 console.log(req.body);
+                console.log(req.params);
                 func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId, body: req.body }, handleResult);
               } else {
                 func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId }, handleResult);
