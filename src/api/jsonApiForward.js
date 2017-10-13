@@ -35,9 +35,9 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
                 console.log(paramsS);
                 console.log(req.body);
                 console.log(req.params);
-                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((cur, new) => ({...cur, ...new})), userId, body: req.body }, handleResult);
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({...c, ...n})), userId, body: req.body }, handleResult);
               } else {
-                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((cur, new) => ({...cur, ...new})), userId }, handleResult);
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({...c, ...n})), userId }, handleResult);
               }
             }
           });
@@ -47,7 +47,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
       }
     } else {
       // params { nameWeUse: "name_they_use" }
-      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })).reduce((cur, new) => ({...cur, ...new})) }, handleResult);
+      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })).reduce((c, n) => ({...c, ...n})) }, handleResult);
     }
   }
 };
