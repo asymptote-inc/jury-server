@@ -32,6 +32,8 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
               res.sendStatus(401); // Unauthorized
             } else {
               if (injectS.indexOf('body') !== -1) {
+                console.log(paramsS);
+                console.log(req.body);
                 func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId, body: req.body }, handleResult);
               } else {
                 func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId }, handleResult);
