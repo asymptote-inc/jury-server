@@ -16,7 +16,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
     let paramsS = params || {};
     let injectS = inject || [];
 
-    if ('userId' in injectS) {
+    if (injectS.indexOf('userId') !== -1) {
       // inject { nameWeUse: value }
       const auth = req.headers['Authorization'] || req.headers['authorization'];
 
@@ -31,7 +31,14 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
               res.setHeader('WWW-Authenticate', 'Bearer');
               res.sendStatus(401); // Unauthorized
             } else {
-              func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })), userId }, handleResult);
+              if (injectS.indexOf('body') !== -1) {
+                console.log(paramsS);
+                console.log(req.body);
+                console.log(req.params);
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({...c, ...n})), userId, body: req.body }, handleResult);
+              } else {
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({...c, ...n})), userId }, handleResult);
+              }
             }
           });
         }
@@ -40,7 +47,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
       }
     } else {
       // params { nameWeUse: "name_they_use" }
-      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })) }, handleResult);
+      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })).reduce((c, n) => ({...c, ...n})) }, handleResult);
     }
   }
 };
