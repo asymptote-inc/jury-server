@@ -120,7 +120,7 @@ app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQ
 
 app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
 
-app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.postUserAnswerToQuestion, { "questionId": "question_id" }, ['userId', 'body']));
+app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.postUserAnswerToQuestion, { "question_id": "question_id" }, ['userId', 'body']));
 
 app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId']));
 
@@ -128,7 +128,7 @@ app.get('/api/workers/user/quality_summary', jsonApiCall(api.getUserQuality, {},
 
 app.get('/api/answers', jsonApiCall(api.getAllAnswers));
 
-app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "questionId": "question_id" }));
+app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "question_id": "question_id" }));
 
 app.get('/api/quality_summary', jsonApiCall(api.getQuality));
 
@@ -164,4 +164,4 @@ app.get('/xapi/get_user_unanswered_questions', (req, res) => {
 
 app.listen(port, () => {
   console.info(`${environment} server listening on port ${port}.`)
- });
+});
