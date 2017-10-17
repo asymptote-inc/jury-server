@@ -2,9 +2,15 @@ const mongoose = require('mongoose');
 
 const answerSchema = new mongoose.Schema({
   userId: String,
-  questionId: String,
-  answer: String,
-  answerDescription: String
+  question_id: String,
+  answer: {
+    readableAndInEnglish: String,
+    toxic: String,
+    obscene: String,
+    identityHate: String,
+    insult: String,
+    comments: String
+  }
 });
 
 const Answer = mongoose.model('Answer', answerSchema);

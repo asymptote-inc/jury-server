@@ -3,6 +3,7 @@ const withUserId = require('../auth/testAccess');
 const jsonApiForward = (func, params, inject) => (req, res) => {
   const handleResult = (err, r) => {
     if (err) {
+      console.error(err.message);
       res.sendStatus(500);
     } else {
       res.setHeader('Content-Type', 'application/json');
@@ -32,12 +33,9 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
               res.sendStatus(401); // Unauthorized
             } else {
               if (injectS.indexOf('body') !== -1) {
-                console.log(paramsS);
-                console.log(req.body);
-                console.log(req.params);
-                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({...c, ...n})), userId, body: req.body }, handleResult);
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({ ...c, ...n })), userId, body: req.body }, handleResult);
               } else {
-                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({...c, ...n})), userId }, handleResult);
+                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({ ...c, ...n })), userId }, handleResult);
               }
             }
           });
@@ -47,7 +45,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
       }
     } else {
       // params { nameWeUse: "name_they_use" }
-      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })).reduce((c, n) => ({...c, ...n})) }, handleResult);
+      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })).reduce((c, n) => ({ ...c, ...n })) }, handleResult);
     }
   }
 };
