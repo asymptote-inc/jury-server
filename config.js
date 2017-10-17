@@ -7,6 +7,9 @@ const crowd9ApiUrl =
     process.env.NODE_ENV === 'production' ?
         'https://crowd9api-dot-wikidetox.appspot.com' :
         'http://localhost:8000';
+
 const clientJobKey = process.env.client_job_key;
 
-module.exports = { crowd9ApiUrl, mongoDbConnectionString, clientJobKey };
+const morganCfg = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
+
+module.exports = { crowd9ApiUrl, mongoDbConnectionString, clientJobKey, morganCfg };

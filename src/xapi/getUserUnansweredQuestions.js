@@ -24,7 +24,7 @@ function getUserUnansweredQuestions(userId, callback) {
           .find()
           .where('question_id') // questions user has not answered
           .nin(res.map(ans => ans.questionId))
-          .sort('field answerCount')
+          .sort('field answer_count')
           .limit(10) // limit to 10 questions 
           .exec((errq, resq) => {
             if (errq) {
