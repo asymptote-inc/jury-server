@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 
 const questionSchema = new mongoose.Schema({
-  questionId: String,
-  question: String,
-  answersPerQuestion: Number,
-  answerCount: Number
+  question_id: String,
+  question: {
+    revision_id: String,
+    revision_text: String
+  },
+  answers_per_question: Number,
+  answer_count: Number
 });
 
 const Question = mongoose.model('Question', questionSchema);

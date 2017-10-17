@@ -22,6 +22,7 @@ router.use('/xapi', auth);
 app.use(morgan('dev'));
 app.use(bodyParser.json({ type: 'application/json' }));
 app.use('/', router);
+app.use('/site', express.static('web'));
 
 const port = process.env.PORT || 80;
 const environment = process.env.NODE_ENV || 'development';
@@ -163,4 +164,4 @@ app.get('/xapi/get_user_unanswered_questions', (req, res) => {
 
 app.listen(port, () => {
   console.info(`${environment} server listening on port ${port}.`)
-});
+ });
