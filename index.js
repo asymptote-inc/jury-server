@@ -26,9 +26,16 @@ const router = express.Router();
 router.use('/api', auth);
 router.use('/xapi', auth);
 
+app.use(function (req, res, next) {
+  if (req.url.substr(-1) == '/' && req.url.length > 1)
+    res.redirect(301, req.url.slice(0, -1));
+  else
+    next();
+});
+
 app.use(morgan(config.morganCfg));
 app.use(bodyParser.json({ type: 'application/json' }));
-app.use('/site', express.static('web'));
+app.use('/site', express.static('web', { 'index': ['index.html'] }));
 app.use('/', router);
 
 const port = process.env.PORT || 80;
