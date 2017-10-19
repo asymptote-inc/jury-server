@@ -4,15 +4,6 @@ const Answer = require('../models/answer');
 const Question = require('../models/question');
 const api = require('../api/crowd9Api');
 
-function convertQuestion(qc9) {
-  return {
-    questionId: qc9.question_id,
-    question: qc9.question,
-    answersPerQuestion: qc9.answers_per_question,
-    answerCount: qc9.answer_count
-  };
-}
-
 function getUserUnansweredQuestions(userId, callback) {
   Answer
     .find({ userId }) // find answers by user
@@ -23,7 +14,7 @@ function getUserUnansweredQuestions(userId, callback) {
         Question
           .find()
           .where('question_id') // questions user has not answered
-          .nin(res.map(ans => ans.questionId))
+          .nin(res.map(ans => ans.question_id))
           .sort('field answer_count')
           .limit(10) // limit to 10 questions 
           .exec((errq, resq) => {
@@ -37,7 +28,7 @@ function getUserUnansweredQuestions(userId, callback) {
                   if (erra) {
                     callback(erra);
                   } else {
-                    const questions = JSON.parse(resa).map(convertQuestion);
+                    const questions = JSON.parse(resa);
                     Question.create(questions, (errm, resm) => {
                       if (errm) {
                         callback(errm);
