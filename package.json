@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "bash build_web.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ."
   },
