@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const Bluebird = require('bluebird');
 const bodyParser = require('body-parser');
@@ -22,13 +23,15 @@ const getScoreboard = require('./src/xapi/getScoreboard');
 
 const app = express();
 
+// Priority serve static files
+app.use('/site', express.static(path.resolve(__dirname, './web'), { 'index': ['index.html'] }));
+
 const router = express.Router();
 router.use('/api', auth);
 router.use('/xapi', auth);
 
 app.use(morgan(config.morganCfg));
 app.use(bodyParser.json({ type: 'application/json' }));
-app.use('/site', express.static('web', { 'index': ['index.html'] }));
 app.use('/', router);
 
 const port = process.env.PORT || 80;
@@ -40,7 +43,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.get('/', (req, res) => {
-  res.sendStatus(200); // Ok
+  res.sendFile(path.resolve(__dirname, './web', 'index.html'));
 });
 
 app.post('/register', (req, res) => {
