@@ -42,7 +42,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.get('/', (req, res) => {
-  response.sendFile(path.resolve(__dirname, './web', 'index.html'));
+  res.sendFile(path.resolve(__dirname, './web', 'index.html'));
 });
 
 app.post('/register', (req, res) => {
