@@ -24,8 +24,11 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
       if (auth) {
         let bearerAndCode = auth.split(/\s+/);
 
-        if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-          res.sendStatus(400); // Bad request      
+        if (
+          bearerAndCode.length !== 2 ||
+          !/^[Bb]earer$/.test(bearerAndCode[0])
+        ) {
+          res.sendStatus(400); // Bad request
         } else {
           withUserId({ code: bearerAndCode[1] }, (err, userId) => {
             if (err) {
@@ -33,9 +36,26 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
               res.sendStatus(401); // Unauthorized
             } else {
               if (injectS.indexOf('body') !== -1) {
-                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({ ...c, ...n })), userId, body: req.body }, handleResult);
+                func(
+                  {
+                    ...Object.keys(paramsS)
+                      .map(k => ({ [k]: req.params[paramsS[k]] }))
+                      .reduce((c, n) => ({ ...c, ...n })),
+                    userId,
+                    body: req.body
+                  },
+                  handleResult
+                );
               } else {
-                func({ ...Object.keys(paramsS).map(k => ({ [k]: req.params[paramsS[k]] })).reduce((c, n) => ({ ...c, ...n })), userId }, handleResult);
+                func(
+                  {
+                    ...Object.keys(paramsS)
+                      .map(k => ({ [k]: req.params[paramsS[k]] }))
+                      .reduce((c, n) => ({ ...c, ...n })),
+                    userId
+                  },
+                  handleResult
+                );
               }
             }
           });
@@ -45,7 +65,14 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
       }
     } else {
       // params { nameWeUse: "name_they_use" }
-      func({ ...Object.keys(params).map(k => ({ [k]: req.params[params[k]] })).reduce((c, n) => ({ ...c, ...n })) }, handleResult);
+      func(
+        {
+          ...Object.keys(params)
+            .map(k => ({ [k]: req.params[params[k]] }))
+            .reduce((c, n) => ({ ...c, ...n }))
+        },
+        handleResult
+      );
     }
   }
 };

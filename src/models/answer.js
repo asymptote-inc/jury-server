@@ -10,7 +10,8 @@ const answerSchema = new mongoose.Schema({
     identityHate: String,
     insult: String,
     comments: String
-  }
+  },
+  skipped: Boolean
 });
 
 const Answer = mongoose.model('Answer', answerSchema);

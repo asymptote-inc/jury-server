@@ -1,8 +1,7 @@
 const User = require('../models/user');
 
 function getUserData(userId, callback) {
-  User
-    .findOne({ userId })
+  User.findOne({ userId })
     .select('name email coins -_id')
     .exec((err, res) => {
       if (err) {

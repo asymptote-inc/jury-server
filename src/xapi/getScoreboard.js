@@ -1,8 +1,7 @@
 const User = require('../models/user');
 
 function getScoreboard(callback) {
-  User
-    .find()
+  User.find()
     .sort('field coins')
     .limit(15)
     .select('name email coins -_id')

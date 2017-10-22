@@ -24,7 +24,22 @@ const getScoreboard = require('./src/xapi/getScoreboard');
 const app = express();
 
 // Priority serve static files
-app.use('/site', express.static(path.resolve(__dirname, './web'), { 'index': ['index.html'] }));
+app.use(
+  '/site',
+  express.static(path.resolve(__dirname, './web'), { index: ['index.html'] })
+);
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization'
+    );
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+  });
+}
 
 const router = express.Router();
 router.use('/api', auth);
@@ -38,7 +53,10 @@ const port = process.env.PORT || 80;
 const environment = process.env.NODE_ENV || 'development';
 
 mongoose.Promise = Bluebird;
-mongoose.connect(config.mongoDbConnectionString, { useMongoClient: true, promiseLibrary: Bluebird });
+mongoose.connect(config.mongoDbConnectionString, {
+  useMongoClient: true,
+  promiseLibrary: Bluebird
+});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
@@ -81,7 +99,7 @@ app.post('/logout', (req, res) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       logout({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
@@ -104,7 +122,7 @@ app.get('/touch', (req, res) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       testAccess({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
@@ -126,19 +144,37 @@ app.get('/api/training_questions', jsonApiCall(api.getAllTrainingQuestions));
 
 app.get('/api/to_answer_questions', jsonApiCall(api.getAllToAnswerQuestions));
 
-app.get('/api/next10_unanswered_questions', jsonApiCall(api.getNext10UnansweredQuestions));
+app.get(
+  '/api/next10_unanswered_questions',
+  jsonApiCall(api.getNext10UnansweredQuestions)
+);
 
 app.get('/api/answered_questions', jsonApiCall(api.getAllAnsweredQuestions));
 
-app.post('/api/questions/:question_id/answers/user', jsonApiCall(api.postUserAnswerToQuestion, { "question_id": "question_id" }, ['userId', 'body']));
+app.post(
+  '/api/questions/:question_id/answers/user',
+  jsonApiCall(api.postUserAnswerToQuestion, { question_id: 'question_id' }, [
+    'userId',
+    'body'
+  ])
+);
 
-app.get('/api/workers/user', jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId']));
+app.get(
+  '/api/workers/user',
+  jsonApiCall(api.getUserSubmittedAnswers, {}, ['userId'])
+);
 
-app.get('/api/workers/user/quality_summary', jsonApiCall(api.getUserQuality, {}, ['userId']));
+app.get(
+  '/api/workers/user/quality_summary',
+  jsonApiCall(api.getUserQuality, {}, ['userId'])
+);
 
 app.get('/api/answers', jsonApiCall(api.getAllAnswers));
 
-app.get('/api/questions/:question_id/answers', jsonApiCall(api.getAllAnswersToQuestion, { "question_id": "question_id" }));
+app.get(
+  '/api/questions/:question_id/answers',
+  jsonApiCall(api.getAllAnswersToQuestion, { question_id: 'question_id' })
+);
 
 app.get('/api/quality_summary', jsonApiCall(api.getQuality));
 
@@ -149,7 +185,7 @@ app.get('/xapi/user_unanswered_questions', (req, res) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       testAccess({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
@@ -158,7 +194,7 @@ app.get('/xapi/user_unanswered_questions', (req, res) => {
         } else {
           getUserUnansweredQuestions(userId, (errx, resx) => {
             if (errx) {
-              res.sendStatus(500); // Internal Server Errort    
+              res.sendStatus(500); // Internal Server Errort
             } else {
               res.setHeader('Content-Type', 'application/json');
               res.send(resx);
@@ -179,21 +215,26 @@ app.post('/xapi/user_answer/:questionId', (req, res) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       testAccess({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
           res.setHeader('WWW-Authenticate', 'Bearer');
           res.sendStatus(401); // Unauthorized
         } else {
-          postUserAnswer(userId, req.params.questionId, req.body, (errx, resx) => {
-            if (errx) {
-              res.sendStatus(500); // Internal Server Errort    
-            } else {
-              res.setHeader('Content-Type', 'application/json');
-              res.send(resx);
+          postUserAnswer(
+            userId,
+            req.params.questionId,
+            req.body,
+            (errx, resx) => {
+              if (errx) {
+                res.sendStatus(500); // Internal Server Errort
+              } else {
+                res.setHeader('Content-Type', 'application/json');
+                res.send(resx);
+              }
             }
-          });
+          );
         }
       });
     }
@@ -209,7 +250,7 @@ app.get('/xapi/user_data', (req, res) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       testAccess({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
@@ -218,7 +259,7 @@ app.get('/xapi/user_data', (req, res) => {
         } else {
           getUserData(userId, (errx, resx) => {
             if (errx) {
-              res.sendStatus(500); // Internal Server Errort    
+              res.sendStatus(500); // Internal Server Errort
             } else {
               res.setHeader('Content-Type', 'application/json');
               res.send(resx);
@@ -239,7 +280,7 @@ app.get('/xapi/scoreboard', (req, res) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       testAccess({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
@@ -248,7 +289,7 @@ app.get('/xapi/scoreboard', (req, res) => {
         } else {
           getScoreboard((errx, resx) => {
             if (errx) {
-              res.sendStatus(500); // Internal Server Errort    
+              res.sendStatus(500); // Internal Server Errort
             } else {
               res.setHeader('Content-Type', 'application/json');
               res.send(resx);
@@ -263,5 +304,5 @@ app.get('/xapi/scoreboard', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.info(`${environment} server listening on port ${port}.`)
+  console.info(`${environment} server listening on port ${port}.`);
 });

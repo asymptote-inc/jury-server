@@ -13,25 +13,39 @@ module.exports = {
   },
 
   getAllTrainingQuestions: callback => {
-    request.get(`${url}/client_jobs/${cjk}/training_questions`, clean(callback));
+    request.get(
+      `${url}/client_jobs/${cjk}/training_questions`,
+      clean(callback)
+    );
   },
 
   getAllToAnswerQuestions: callback => {
-    request.get(`${url}/client_jobs/${cjk}/to_answer_questions`, clean(callback));
+    request.get(
+      `${url}/client_jobs/${cjk}/to_answer_questions`,
+      clean(callback)
+    );
   },
 
   getNext10UnansweredQuestions: callback => {
-    request.get(`${url}/client_jobs/${cjk}/next10_unanswered_questions`, clean(callback));
+    request.get(
+      `${url}/client_jobs/${cjk}/next10_unanswered_questions`,
+      clean(callback)
+    );
   },
 
   getAllAnsweredQuestions: callback => {
-    request.get(`${url}/client_jobs/${cjk}/answered_questions`, clean(callback));
+    request.get(
+      `${url}/client_jobs/${cjk}/answered_questions`,
+      clean(callback)
+    );
   },
 
   postUserAnswerToQuestion: ({ questionId, userId, body }, callback) => {
     console.log({ questionId, userId, body });
     request
-      .post(`${url}/client_jobs/${cjk}/questions/${questionId}/answers/${userId}`)
+      .post(
+        `${url}/client_jobs/${cjk}/questions/${questionId}/answers/${userId}`
+      )
       .set('Content-Type', 'application/json')
       .send(body)
       .end(clean(callback));
@@ -42,7 +56,10 @@ module.exports = {
   },
 
   getUserQuality: ({ userId }, callback) => {
-    request.get(`${url}/client_jobs/${cjk}/workers/${userId}/quality_summary`, clean(callback));
+    request.get(
+      `${url}/client_jobs/${cjk}/workers/${userId}/quality_summary`,
+      clean(callback)
+    );
   },
 
   getAllAnswers: callback => {
@@ -50,7 +67,10 @@ module.exports = {
   },
 
   getAllAnswersToQuestion: ({ questionId }, callback) => {
-    request.get(`${url}/client_jobs/${cjk}/questions/${questionId}/answers`, clean(callback));
+    request.get(
+      `${url}/client_jobs/${cjk}/questions/${questionId}/answers`,
+      clean(callback)
+    );
   },
 
   getQuality: callback => {

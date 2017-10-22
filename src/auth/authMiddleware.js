@@ -7,7 +7,7 @@ const auth = (req, res, next) => {
     let bearerAndCode = auth.split(/\s+/);
 
     if (bearerAndCode.length !== 2 || !/^[Bb]earer$/.test(bearerAndCode[0])) {
-      res.sendStatus(400); // Bad request      
+      res.sendStatus(400); // Bad request
     } else {
       testAccess({ code: bearerAndCode[1] }, (err, userId) => {
         if (err) {
@@ -21,6 +21,6 @@ const auth = (req, res, next) => {
   } else {
     res.sendStatus(403); // Forbidden
   }
-}
+};
 
 module.exports = auth;
