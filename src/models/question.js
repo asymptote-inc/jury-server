@@ -6,8 +6,8 @@ const questionSchema = new mongoose.Schema({
     revision_id: String,
     revision_text: String
   },
-  answers_per_question: Number,
-  answer_count: Number
+  answers_per_question: {type: Number, default: 10},
+  answer_count: {type: Number, default: 0}
 });
 
 const Question = mongoose.model('Question', questionSchema);
