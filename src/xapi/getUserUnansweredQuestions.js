@@ -24,7 +24,7 @@ function getUserUnansweredQuestions(userId, callback) {
                 callback(undefined, resq);
               } else {
                 // if not, fetch next 10
-                api.getNext10UnansweredQuestions((erra, resa) => {
+                api.getAllToAnswerQuestions((erra, resa) => {
                   if (erra) {
                     callback(erra);
                   } else {
