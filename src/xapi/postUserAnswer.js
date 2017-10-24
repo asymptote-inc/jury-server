@@ -32,7 +32,7 @@ function postUserAnswer(userId, questionId, body, callback) {
           callback(errSaveAnswer);
         } else {
           api.postUserAnswerToQuestion(
-            { questionId, userId, body: body.answer },
+            { questionId, userId, body },
             (err, res) => {
               if (err) {
                 callback(err);
