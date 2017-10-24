@@ -47,7 +47,7 @@ module.exports = {
         `${url}/client_jobs/${cjk}/questions/${questionId}/answers/${userId}`
       )
       .set('Content-Type', 'application/json')
-      .send(body)
+      .send(JSON.stringify(body))
       .end(clean(callback));
   },
 
