@@ -31,6 +31,11 @@ function postUserAnswer(userId, questionId, body, callback) {
         if (errSaveAnswer) {
           callback(errSaveAnswer);
         } else {
+          if (body.skip) {
+            callback(undefined, { status: 'OK' });
+            return;
+          }
+          
           api.postUserAnswerToQuestion(
             { questionId, userId, body },
             (err, res) => {
