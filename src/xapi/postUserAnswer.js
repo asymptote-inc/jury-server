@@ -21,7 +21,7 @@ function postUserAnswer(userId, questionId, body, callback) {
         answer: body.answer
       });
       let value =
-        10 /* toxic */ +
+        10 * !!body.answer.toxic +
         5 * !!body.answer.obscene +
         5 * !!body.answer.identityHate +
         5 * !!body.answer.insult +
@@ -32,7 +32,7 @@ function postUserAnswer(userId, questionId, body, callback) {
           callback(errSaveAnswer);
         } else {
           api.postUserAnswerToQuestion(
-            { questionId, userId, body },
+            { questionId, userId, body: body.answer },
             (err, res) => {
               if (err) {
                 callback(err);
