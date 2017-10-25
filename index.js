@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const Bluebird = require('bluebird');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const morgan = require('morgan');
 
 const config = require('./config');
@@ -23,23 +24,15 @@ const getScoreboard = require('./src/xapi/getScoreboard');
 
 const app = express();
 
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors());
+}
+
 // Priority serve static files
 app.use(
   '/site',
   express.static(path.resolve(__dirname, './web'), { index: ['index.html'] })
 );
-
-if (process.env.NODE_ENV !== 'production') {
-  app.use((req, res, next) => {
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Authorization'
-    );
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    next();
-  });
-}
 
 const router = express.Router();
 router.use('/api', auth);

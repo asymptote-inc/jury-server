@@ -15,25 +15,31 @@ function postUserAnswer(userId, questionId, body, callback) {
     } else if (resAnswer.length > 0) {
       callback(new Error('You already answered that question. '));
     } else {
-      let answer = new Answer({
-        userId,
-        question_id: questionId,
-        answer: body.answer
-      });
-      let value =
-        10 * !!body.answer.toxic +
-        5 * !!body.answer.obscene +
-        5 * !!body.answer.identityHate +
-        5 * !!body.answer.insult +
-        5 * !!body.answer.threat;
+      // Set correct contents
+      let answer;
+      if (body.skipped) {
+        answer = new Answer({
+          userId,
+          question_id: questionId,
+          skipped: true
+        });
+      } else {
+        answer = new Answer({
+          userId,
+          question_id: questionId,
+          answer: body.answer
+        });
+      }
 
       answer.save(errSaveAnswer => {
         if (errSaveAnswer) {
           callback(errSaveAnswer);
         } else {
           if (body.skipped) {
+            // Nothing except answer to save
             callback(undefined, { status: 'OK' });
           } else {
+            // Send answer, Update user stuff + question stuff
             api.postUserAnswerToQuestion(
               { questionId, userId, body },
               (err, res) => {
@@ -44,6 +50,13 @@ function postUserAnswer(userId, questionId, body, callback) {
                 }
               }
             );
+
+            let value =
+              10 * !!body.answer.toxic +
+              5 * !!body.answer.obscene +
+              5 * !!body.answer.identityHate +
+              5 * !!body.answer.insult +
+              5 * !!body.answer.threat;
 
             User.findOneAndUpdate(
               { userId },
