@@ -31,43 +31,42 @@ function postUserAnswer(userId, questionId, body, callback) {
         if (errSaveAnswer) {
           callback(errSaveAnswer);
         } else {
-          if (body.skip) {
+          if (body.skipped) {
             callback(undefined, { status: 'OK' });
-            return;
-          }
-          
-          api.postUserAnswerToQuestion(
-            { questionId, userId, body },
-            (err, res) => {
-              if (err) {
-                callback(err);
-              } else {
-                callback(undefined, { status: 'OK' });
+          } else {
+            api.postUserAnswerToQuestion(
+              { questionId, userId, body },
+              (err, res) => {
+                if (err) {
+                  callback(err);
+                } else {
+                  callback(undefined, { status: 'OK' });
+                }
               }
-            }
-          );
+            );
 
-          User.findOneAndUpdate(
-            { userId },
-            { $inc: { coins: value } }
-          ).exec((errUser, resUser) => {
-            //
-          });
-
-          Question.findOneAndUpdate(
-            { question_id: questionId },
-            { $inc: { answer_count: 1 } }
-          ).exec((errQuestion, resQuestion) => {
-            if (errQuestion || !resQuestion) {
+            User.findOneAndUpdate(
+              { userId },
+              { $inc: { coins: value } }
+            ).exec((errUser, resUser) => {
               //
-            } else {
-              if (
-                resQuestion.answer_count >= resQuestion.answers_per_question
-              ) {
-                resQuestion.remove();
+            });
+
+            Question.findOneAndUpdate(
+              { question_id: questionId },
+              { $inc: { answer_count: 1 } }
+            ).exec((errQuestion, resQuestion) => {
+              if (errQuestion || !resQuestion) {
+                //
+              } else {
+                if (
+                  resQuestion.answer_count >= resQuestion.answers_per_question
+                ) {
+                  resQuestion.remove();
+                }
               }
-            }
-          });
+            });
+          }
         }
       });
     }

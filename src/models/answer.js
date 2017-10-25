@@ -11,7 +11,7 @@ const answerSchema = new mongoose.Schema({
     insult: String,
     comments: String
   },
-  skip: Boolean
+  skipped: Boolean
 });
 
 const Answer = mongoose.model('Answer', answerSchema);
