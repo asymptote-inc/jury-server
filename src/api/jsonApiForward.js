@@ -40,7 +40,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
                   {
                     ...Object.keys(paramsS)
                       .map(k => ({ [k]: req.params[paramsS[k]] }))
-                      .reduce((c, n) => ({ ...c, ...n })),
+                      .reduce((c, n) => ({ ...c, ...n }), {}),
                     userId,
                     body: req.body
                   },
@@ -51,7 +51,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
                   {
                     ...Object.keys(paramsS)
                       .map(k => ({ [k]: req.params[paramsS[k]] }))
-                      .reduce((c, n) => ({ ...c, ...n })),
+                      .reduce((c, n) => ({ ...c, ...n }), {}),
                     userId
                   },
                   handleResult
@@ -69,7 +69,7 @@ const jsonApiForward = (func, params, inject) => (req, res) => {
         {
           ...Object.keys(params)
             .map(k => ({ [k]: req.params[params[k]] }))
-            .reduce((c, n) => ({ ...c, ...n }))
+            .reduce((c, n) => ({ ...c, ...n }), {})
         },
         handleResult
       );
