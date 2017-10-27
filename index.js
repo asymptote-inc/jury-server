@@ -5,6 +5,7 @@ const Bluebird = require('bluebird');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
+const compression = require('compression');
 
 const config = require('./config');
 
@@ -26,7 +27,17 @@ const app = express();
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(cors());
+} else {
+  app.use((req, res, next) => {
+    // Force redirect to https
+    if (req.secure === false || req.headers['x-forwarded-proto'] === 'http') {
+      res.redirect(`https://${req.headers['host']}${req.url}`);
+    } else {
+      next();
+    }
+  });
 }
+app.use(compression());
 
 // Priority serve static files
 app.use(
