@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
   app.use((req, res, next) => {
     // Force redirect to https
-    if (req.secure === false || req.headers['x-forwarded-proto'] === 'http') {
+    if (req.headers['x-forwarded-proto'] === 'http') {
       res.redirect(`https://${req.headers['host']}${req.url}`);
     } else {
       next();
