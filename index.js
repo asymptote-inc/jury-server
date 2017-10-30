@@ -39,12 +39,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 app.use(compression());
 
-// Priority serve static files
-app.use(
-  '/site',
-  express.static(path.resolve(__dirname, './web'), { index: ['index.html'] })
-);
-
 const router = express.Router();
 router.use('/api', auth);
 router.use('/xapi', auth);
@@ -65,11 +59,32 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.get(
-  ['/', '/login', '/register', '/scoreboard', '/moderator', '/stats'],
+  [
+    '/index.html',
+    '/',
+    '/login',
+    '/register',
+    '/scoreboard',
+    '/moderator',
+    '/stats'
+  ],
   (req, res) => {
     res.sendFile(path.resolve(__dirname, './web', 'index.html'));
   }
 );
+app.use('/static', express.static(path.resolve(__dirname, './web/static')));
+app.get('/asset-manifest.json', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './web', 'asset-manifest.json'));
+});
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './web', 'favicon.ico'));
+});
+app.get('/manifest.json', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './web', 'manifest.json'));
+});
+app.get('/service-worker.js', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './web', 'service-worker.js'));
+});
 
 app.post('/register', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
