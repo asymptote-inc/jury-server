@@ -60,13 +60,16 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.get(
   [
-    '/index.html',
-    '/',
-    '/login',
     '/register',
-    '/scoreboard',
+    '/login',
+    '/',
     '/moderator',
-    '/stats'
+    '/scoreboard',
+    '/help/install',
+    '/help/moderate',
+    '/profile',
+    '/stats',
+    '/logout'
   ],
   (req, res) => {
     res.sendFile(path.resolve(__dirname, './web', 'index.html'));
