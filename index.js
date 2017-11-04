@@ -60,6 +60,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.get(
   [
+    '/index.html',
     '/register',
     '/login',
     '/',
@@ -86,7 +87,7 @@ app.get('/manifest.json', (req, res) => {
   res.sendFile(path.resolve(__dirname, './web', 'manifest.json'));
 });
 app.get('/service-worker.js', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './web', 'service-worker.js'));
+  res.sendFile(path.resolve(__dirname, './web', 'service-worker.js'), {});
 });
 
 app.post('/register', (req, res) => {
